@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="AndroidStudio开发Gradle插件项目结构：gradlePlugin  app  src    build.gradle   buildSrc  src     main        java           com.lis.buildsrc              MyPlugin.java            build.gradle   build.gradle  简单">
+  <meta name="description" content="AndroidStudio开发Gradle插件项目结构：gradlePlugin  app  src    build.gradle   buildSrc  src     main        java           com.lis.buildsrc              MyPlugin.java            build.gradle   build.gradle  简">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/2020/12/08/gradle/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="AndroidStudio开发Gradle插件项目结构：gradlePlugin  app  src    build.gradle   buildSrc  src     main        java           com.lis.buildsrc              MyPlugin.java            build.gradle   build.gradle  简单">
+<meta property="og:description" content="AndroidStudio开发Gradle插件项目结构：gradlePlugin  app  src    build.gradle   buildSrc  src     main        java           com.lis.buildsrc              MyPlugin.java            build.gradle   build.gradle  简">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2020/12/08/gradle/build.png">
 <meta property="og:image" content="http://example.com/2020/12/08/gradle/buildoutput.png">
 <meta property="og:image" content="http://example.com/2020/12/08/gradle/upload.png">
 <meta property="og:image" content="http://example.com/2020/12/08/gradle/repo.png">
 <meta property="article:published_time" content="2020-12-08T03:46:53.099Z">
-<meta property="article:modified_time" content="2020-12-08T05:45:43.872Z">
+<meta property="article:modified_time" content="2020-12-08T05:55:50.914Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2020/12/08/gradle/build.png">
@@ -164,7 +164,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="AndroidStudio开发Gradle插件"><a href="#AndroidStudio开发Gradle插件" class="headerlink" title="AndroidStudio开发Gradle插件"></a>AndroidStudio开发Gradle插件</h1><h2 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h2><p>gradlePlugin</p>
+        <hr>
+<h2 id="AndroidStudio开发Gradle插件"><a href="#AndroidStudio开发Gradle插件" class="headerlink" title="AndroidStudio开发Gradle插件"></a>AndroidStudio开发Gradle插件</h2><h2 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h2><p>gradlePlugin</p>
 <ul>
 <li>app</li>
 <li><ul>
@@ -233,15 +234,17 @@
 <li>build.gradle</li>
 </ul>
 <h2 id="简单的Gradle插件BuildSrc"><a href="#简单的Gradle插件BuildSrc" class="headerlink" title="简单的Gradle插件BuildSrc"></a>简单的Gradle插件BuildSrc</h2><p>如果开发的插件仅用于当前项目，不需要发布的话，只需要注意两点:</p>
+<a id="more"></a>
+
 <ol>
 <li><p>插件的Module名称必须是buildSrc(开头一定要小写)</p>
 </li>
 <li><p>无须resources目录</p>
+<p>build.gradle的配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apply plugin:<span class="string">&#x27;java&#x27;</span></span><br><span class="line">   apply plugin:<span class="string">&#x27;groovy&#x27;</span></span><br><span class="line">   repositories &#123;</span><br><span class="line">       google()</span><br><span class="line">       jcenter()</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   dependencies &#123;</span><br><span class="line">       <span class="function">implementation <span class="title">gradleApi</span><span class="params">()</span> <span class="comment">//gradle sdk</span></span></span><br><span class="line"><span class="function">     	implementation <span class="title">localGroovy</span><span class="params">()</span> <span class="comment">//groovy sdk</span></span></span><br><span class="line"><span class="function">       implementation &#x27;com.android.tools.build:gradle:3.6.3&#x27;</span></span><br><span class="line"><span class="function">   &#125;</span></span><br><span class="line"><span class="function">   </span></span><br><span class="line"><span class="function">   sourceCompatibility </span>= <span class="string">&quot;1.7&quot;</span></span><br><span class="line">   targetCompatibility = <span class="string">&quot;1.7&quot;</span></span><br></pre></td></tr></table></figure>
+
 </li>
 </ol>
-<p>   build.gradle的配置：</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apply plugin:<span class="string">&#x27;java&#x27;</span></span><br><span class="line">apply plugin:<span class="string">&#x27;groovy&#x27;</span></span><br><span class="line">repositories &#123;</span><br><span class="line">    google()</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">implementation <span class="title">gradleApi</span><span class="params">()</span> <span class="comment">//gradle sdk</span></span></span><br><span class="line"><span class="function">  	implementation <span class="title">localGroovy</span><span class="params">()</span> <span class="comment">//groovy sdk</span></span></span><br><span class="line"><span class="function">    implementation &#x27;com.android.tools.build:gradle:3.6.3&#x27;</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">sourceCompatibility </span>= <span class="string">&quot;1.7&quot;</span></span><br><span class="line">targetCompatibility = <span class="string">&quot;1.7&quot;</span></span><br></pre></td></tr></table></figure>
-
 <p>这里引入groovy sdk和gradle sdk,因为开发Android插件，还需要Android专用的gradle（这里需要使用到google仓库）</p>
 <p>然后我们编写插件，MyPlugin:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.logging.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(Project project)</span> </span>&#123;</span><br><span class="line">        Logger logger = project.getLogger();</span><br><span class="line">        logger.error(<span class="string">&quot;=====================&quot;</span>);</span><br><span class="line">        logger.error(<span class="string">&quot;最简单的Gradle插件&quot;</span>);</span><br><span class="line">        logger.error(<span class="string">&quot;=====================&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

@@ -157,7 +157,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="AndroidStudio开发Gradle插件"><a href="#AndroidStudio开发Gradle插件" class="headerlink" title="AndroidStudio开发Gradle插件"></a>AndroidStudio开发Gradle插件</h1><h2 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h2><p>gradlePlugin</p>
+        <hr>
+<h2 id="AndroidStudio开发Gradle插件"><a href="#AndroidStudio开发Gradle插件" class="headerlink" title="AndroidStudio开发Gradle插件"></a>AndroidStudio开发Gradle插件</h2><h2 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h2><p>gradlePlugin</p>
 <ul>
 <li>app</li>
 <li><ul>
@@ -226,164 +227,9 @@
 <li>build.gradle</li>
 </ul>
 <h2 id="简单的Gradle插件BuildSrc"><a href="#简单的Gradle插件BuildSrc" class="headerlink" title="简单的Gradle插件BuildSrc"></a>简单的Gradle插件BuildSrc</h2><p>如果开发的插件仅用于当前项目，不需要发布的话，只需要注意两点:</p>
-<ol>
-<li><p>插件的Module名称必须是buildSrc(开头一定要小写)</p>
-</li>
-<li><p>无须resources目录</p>
-</li>
-</ol>
-<p>   build.gradle的配置：</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apply plugin:<span class="string">&#x27;java&#x27;</span></span><br><span class="line">apply plugin:<span class="string">&#x27;groovy&#x27;</span></span><br><span class="line">repositories &#123;</span><br><span class="line">    google()</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">implementation <span class="title">gradleApi</span><span class="params">()</span> <span class="comment">//gradle sdk</span></span></span><br><span class="line"><span class="function">  	implementation <span class="title">localGroovy</span><span class="params">()</span> <span class="comment">//groovy sdk</span></span></span><br><span class="line"><span class="function">    implementation &#x27;com.android.tools.build:gradle:3.6.3&#x27;</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">sourceCompatibility </span>= <span class="string">&quot;1.7&quot;</span></span><br><span class="line">targetCompatibility = <span class="string">&quot;1.7&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>这里引入groovy sdk和gradle sdk,因为开发Android插件，还需要Android专用的gradle（这里需要使用到google仓库）</p>
-<p>然后我们编写插件，MyPlugin:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.gradle.api.Plugin;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.Project;</span><br><span class="line"><span class="keyword">import</span> org.gradle.api.logging.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(Project project)</span> </span>&#123;</span><br><span class="line">        Logger logger = project.getLogger();</span><br><span class="line">        logger.error(<span class="string">&quot;=====================&quot;</span>);</span><br><span class="line">        logger.error(<span class="string">&quot;最简单的Gradle插件&quot;</span>);</span><br><span class="line">        logger.error(<span class="string">&quot;=====================&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在app的build.gradle中添加你的插件  注意：这里不加’  ‘单引号</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: com.lis.buildsrc.MyPlugin</span><br></pre></td></tr></table></figure>
-
-<p>执行：**Build-make Module ‘app’**生成补丁。</p>
-<p><img src="/2020/12/08/gradle/build.png" alt="image-20200724100113259"></p>
-<p>在底部的 <strong>Buid-Build Output</strong>中便可以看到打印日志：</p>
-<p>=====================<br>简单的Gradle插件</p>
-<p>=====================</p>
-<p><img src="/2020/12/08/gradle/buildoutput.png" alt="image-20200724100524283"></p>
-<h2 id="插件的发布"><a href="#插件的发布" class="headerlink" title="插件的发布"></a>插件的发布</h2><p>如果想复用你的gradle插件，就需要把它发布出去。</p>
-<ul>
-<li>发布到本地仓库</li>
-<li>发布到远程仓库</li>
-</ul>
-<h3 id="本地仓库"><a href="#本地仓库" class="headerlink" title="本地仓库"></a>本地仓库</h3><p>项目结构：</p>
-<p>gradlePlugin</p>
-<ul>
-<li>app</li>
-<li><ul>
-<li>src</li>
-</ul>
-</li>
-<li><ul>
-<li>build.gradle</li>
-</ul>
-</li>
-<li>buildSrc</li>
-<li><ul>
-<li>src</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li>main</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>java</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>com.lis.buildsrc</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>MyPlugin.java</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>resources</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>META-INF.gradle-plugins</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li><ul>
-<li>com.lis.myplugin.properties</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><ul>
-<li>build.gradle</li>
-</ul>
-</li>
-<li>build.gradle</li>
-</ul>
-<p>在buildSrc的main文件夹下添加<strong>resources</strong>文件夹，在该文件夹下添加*<strong>META-INF**<em>，</em></strong>META-INF*<strong>文件夹下添加**<em>gradle-plugins</em></strong></p>
-<p>在**<em>gradle-plugins**</em>中添加com.lis.myplugin.properties  </p>
-<p>这里命名为 <code>com.lis.myplugin.properties</code> ，一定要注意后缀名称，那么使用插件时的名称就是<code>com.lis.myplugin</code>，文件里面的内容填写如下：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation-<span class="class"><span class="keyword">class</span>=<span class="title">com</span>.<span class="title">lis</span>.<span class="title">buildsrc</span>.<span class="title">MyPlugin</span></span></span><br></pre></td></tr></table></figure>
-
-<p>这里指定的路径为MyPlugin的类名，即插件的入口类</p>
-<p>buidSrc中的build.gradle，添加maven插件及发布用到的配置</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span><span class="string">&#x27;java&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span><span class="string">&#x27;groovy&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;maven&#x27;</span></span><br><span class="line">repositories &#123;</span><br><span class="line">    google()</span><br><span class="line">    jcenter()</span><br><span class="line">&#125;</span><br><span class="line">tasks.withType(JavaCompile) &#123; options.encoding = <span class="string">&quot;UTF-8&quot;</span> &#125; <span class="comment">//编码格式</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation gradleApi() <span class="comment">//gradle sdk</span></span><br><span class="line">    implementation localGroovy() <span class="comment">//groovy sdk</span></span><br><span class="line">    implementation <span class="string">&#x27;com.android.tools.build:gradle:3.6.3&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">uploadArchives &#123;</span><br><span class="line">    repositories.mavenDeployer &#123;</span><br><span class="line">        repository(<span class="attr">url:</span> uri(<span class="string">&#x27;../repo&#x27;</span>)) <span class="comment">//仓库的路径，此处是项目根目录下的 repo 的文件夹</span></span><br><span class="line">        pom.groupId = <span class="string">&#x27;com.lis.gradleplugin&#x27;</span>  <span class="comment">//groupId ，自行定义，一般是包名</span></span><br><span class="line">        pom.artifactId = <span class="string">&#x27;myplugin&#x27;</span> <span class="comment">//artifactId ，自行定义</span></span><br><span class="line">        pom.version = <span class="string">&#x27;1.0.0&#x27;</span> <span class="comment">//version 版本号</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">sourceCompatibility = <span class="string">&quot;1.7&quot;</span></span><br><span class="line">targetCompatibility = <span class="string">&quot;1.7&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>同步后在gradle模块内，会出现发布按钮</p>
-<p><img src="/2020/12/08/gradle/upload.png" alt="image-20200724141451792"></p>
-<p>双击<strong>uploadArchives</strong> ,插件就发布到了本地的maven仓库，这里我们是在项目的根目录里，所以会在GradlePlugin下生成repo文件夹及文件</p>
-<p><img src="/2020/12/08/gradle/repo.png" alt="image-20200724141759298"></p>
-<p><strong>使用插件:</strong></p>
-<p>在GradlePlugin根目录的build.gradle中添加本地仓库及插件引用</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">        <span class="comment">//首先需要配置本地的 maven 仓库地址，这里填写的是相对路径，也可以是全路径</span></span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(<span class="string">&#x27;./repo&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">&#x27;com.android.tools.build:gradle:3.6.3&#x27;</span></span><br><span class="line">        <span class="comment">//然后，添加依赖的插件，形式是 groupId：artifactId：version</span></span><br><span class="line">        <span class="comment">//这些都是插件发布时，定义的名称</span></span><br><span class="line">        classpath <span class="string">&#x27;com.lis.gradleplugin:myplugin:1.0.0&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        google()</span><br><span class="line">        jcenter()</span><br><span class="line">        maven &#123;</span><br><span class="line">            url uri(<span class="string">&#x27;./repo&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task clean(<span class="attr">type:</span> Delete) &#123;</span><br><span class="line">    delete rootProject.buildDir</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后，在app的build.gradle里，添加插件</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;com.android.application&#x27;</span></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;com.lis.myplugin&#x27;</span><span class="comment">//这里就填写 .properties 文件的名称</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">29</span></span><br><span class="line">    buildToolsVersion <span class="string">&quot;29.0.3&quot;</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">&quot;com.lis.gradleplugin&quot;</span></span><br><span class="line">        minSdkVersion <span class="number">21</span></span><br><span class="line">        targetSdkVersion <span class="number">29</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">&quot;1.0&quot;</span></span><br><span class="line"></span><br><span class="line">        testInstrumentationRunner <span class="string">&quot;androidx.test.runner.AndroidJUnitRunner&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">&#x27;proguard-android-optimize.txt&#x27;</span>), <span class="string">&#x27;proguard-rules.pro&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="attr">dir:</span> <span class="string">&#x27;libs&#x27;</span>, <span class="attr">include:</span> [<span class="string">&#x27;*.jar&#x27;</span>])</span><br><span class="line">    implementation <span class="string">&#x27;androidx.appcompat:appcompat:1.1.0&#x27;</span></span><br><span class="line">    implementation <span class="string">&#x27;androidx.constraintlayout:constraintlayout:1.1.3&#x27;</span></span><br><span class="line">    testImplementation <span class="string">&#x27;junit:junit:4.12&#x27;</span></span><br><span class="line">    androidTestImplementation <span class="string">&#x27;androidx.test.ext:junit:1.1.1&#x27;</span></span><br><span class="line">    androidTestImplementation <span class="string">&#x27;androidx.test.espresso:espresso-core:3.2.0&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>apply plugin: &#39;com.lis.myplugin&#39;</code>这里的com.lis.myplugin即我们上面<code>com.lis.myplugin.properties</code>文件的名称</p>
-<p>这就完成了本地仓库的插件使用！</p>
-
+        
+          <a class="article-more-a" href="/2020/12/08/gradle/#more">more >></a>
+        
       
 
       
