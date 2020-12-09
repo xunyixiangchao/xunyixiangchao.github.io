@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> AndroidStudio开发Gradle插件 · Lis</title><meta name="description" content="AndroidStudio开发Gradle插件 - John Doe"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/2018.jpg"><link rel="stylesheet" href="/css/prontera.css"><link rel="search" type="application/opensearchdescription+xml" href="http://example.com/atom.xml" title="Lis"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Lis" type="application/atom+xml">
-</head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Lis</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p>主页</p></a><a href="/archives" target="_self" class="li component-nav-item"><p>归档</p></a><ul class="shortcut-icons"><a href="https://github.com/xunyixiangchao" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="post-container"><div class="post"><article class="post-block"><h1 class="post-title">AndroidStudio开发Gradle插件</h1><div class="post-info">2020年12月8日</div><div class="post-content"><h2 id="项目结构："><a href="#项目结构：" class="headerlink" title="项目结构："></a>项目结构：</h2><p>gradlePlugin</p>
+</head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Lis</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p>主页</p></a><a href="/archives" target="_self" class="li component-nav-item"><p>归档</p></a><ul class="shortcut-icons"><a href="https://github.com/xunyixiangchao" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="post-container"><div class="post"><article class="post-block"><h1 class="post-title">AndroidStudio开发Gradle插件</h1><div class="post-info">2020年12月8日</div><div class="post-content"><h2><span id="项目结构">项目结构：</span></h2><p>gradlePlugin</p>
 <ul>
 <li>app</li>
 <li><ul>
@@ -67,7 +67,7 @@
 </li>
 <li>build.gradle</li>
 </ul>
-<h2 id="简单的Gradle插件BuildSrc"><a href="#简单的Gradle插件BuildSrc" class="headerlink" title="简单的Gradle插件BuildSrc"></a>简单的Gradle插件BuildSrc</h2><p>如果开发的插件仅用于当前项目，不需要发布的话，只需要注意两点:</p>
+<h2><span id="简单的gradle插件buildsrc">简单的Gradle插件BuildSrc</span></h2><p>如果开发的插件仅用于当前项目，不需要发布的话，只需要注意两点:</p>
 <ol>
 <li><p>插件的Module名称必须是buildSrc(开头一定要小写)</p>
 </li>
@@ -90,12 +90,12 @@
 <p>=====================<br>简单的Gradle插件</p>
 <p>=====================</p>
 <p><img src="/2020/12/08/gradle/buildoutput.png" alt="image-20200724100524283"></p>
-<h2 id="插件的发布"><a href="#插件的发布" class="headerlink" title="插件的发布"></a>插件的发布</h2><p>如果想复用你的gradle插件，就需要把它发布出去。</p>
+<h2><span id="插件的发布">插件的发布</span></h2><p>如果想复用你的gradle插件，就需要把它发布出去。</p>
 <ul>
 <li>发布到本地仓库</li>
 <li>发布到远程仓库</li>
 </ul>
-<h3 id="本地仓库"><a href="#本地仓库" class="headerlink" title="本地仓库"></a>本地仓库</h3><p>项目结构：</p>
+<h3><span id="本地仓库">本地仓库</span></h3><p>项目结构：</p>
 <p>gradlePlugin</p>
 <ul>
 <li>app</li>
