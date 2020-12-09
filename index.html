@@ -1,2 +1,45 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Lis</title><meta name="description" content="A Blog Powered By Hexo"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/2018.jpg"><link rel="stylesheet" href="/css/prontera.css"><link rel="search" type="application/opensearchdescription+xml" href="http://example.com/atom.xml" title="Lis"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Lis" type="application/atom+xml">
-</head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Lis</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p class="selected">主页</p></a><a href="/archives" target="_self" class="li component-nav-item"><p>归档</p></a><ul class="shortcut-icons"><a href="https://github.com/xunyixiangchao" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="body-container"><div id="post-list" class="left"><div class="home post-list"><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/09/dispatch/" class="post-title-link">事件分发</a></h2><div class="post-info">2020年12月9日</div><div class="post-content"><h1 id="事件分发"><a href="#事件分发" class="headerlink" title="事件分发"></a>事件分发</h1><h2 id="MotionEvent"><a href="#MotionEvent" class="headerlink" title="MotionEvent"></a>MotionEvent</h2><p><img src="/2020/12/09/dispatch/MotionEvent.png" alt="MotionEvent"></p></div><a href="/2020/12/09/dispatch/" class="read-more">阅读全文</a></article></div><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/08/gradle/" class="post-title-link">AndroidStudio开发Gradle插件</a></h2><div class="post-info">2020年12月8日</div><div class="post-content"></div><a href="/2020/12/08/gradle/" class="read-more">阅读全文</a></article></div><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/08/hello-world/" class="post-title-link">Hello World</a></h2><div class="post-info">2020年12月8日</div><div class="post-content"></div><a href="/2020/12/08/hello-world/" class="read-more">阅读全文</a></article></div></div></div><div id="sidebar" class="left"><div id="about-panel"><div class="info"><div class="title">lis</div><div class="url">http://example.com</div><div class="bio">十年饮冰·难凉热血</div></div><img src="/images/2018.jpg" class="avatar"></div><div id="friend-links-panel"><div class="panel-title"><p>友情链接</p></div><a href="http://powman.org" target="_blank" class="link-item"><div class="link-container"><div class="site-name">AngryPowman</div><div class="site-desc">This is a link</div></div></a><a href="http://powman.org" target="_blank" class="link-item"><div class="link-container"><div class="site-name">Demo Links</div><div class="site-desc">You can change this in your theme config</div></div></a></div></div></div><div class="clear"></div></main><footer class="footer-container"><div class="paginator"></div><div class="copyright"><p>© 2017 - 2020 <a href="http://example.com">John Doe</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/AngryPowman/hexo-theme-prontera" target="_blank">hexo-theme-prontera</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"lis",'auto');ga('send','pageview');</script></body></html>
+</head><body><header class="feature-header"><nav class="component-nav"><ul><div class="logo-container"><a href="/"><h2 class="title">Lis</h2></a></div><a href="/" target="_self" class="li component-nav-item"><p class="selected">主页</p></a><a href="/archives" target="_self" class="li component-nav-item"><p>归档</p></a><ul class="shortcut-icons"><a href="https://github.com/xunyixiangchao" target="_blank"><img src="/images/github.svg" class="icon"></a><a href="/atom.xml" target="_blank"><img src="/images/rss.svg" class="icon"></a></ul></ul></nav></header><main class="container"><div id="body-container"><div id="post-list" class="left"><div class="home post-list"><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/09/dispatch/" class="post-title-link">事件分发</a></h2><div class="post-info">2020年12月9日</div><div class="post-content"><h1 id="事件分发"><a href="#事件分发" class="headerlink" title="事件分发"></a>事件分发</h1><!-- toc -->
+
+<ul>
+<li><a href="#motionevent">MotionEvent</a></li>
+<li><a href="#%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91-%E6%8B%A6%E6%88%AA%E4%B8%8E%E6%B6%88%E8%B4%B9">事件分发、拦截与消费</a></li>
+<li><a href="#%E6%80%BB%E6%B5%81%E7%A8%8B">总流程</a></li>
+<li><a href="#ontouch%E5%92%8Conclick">onTouch和onClick</a><ul>
+<li><a href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析：</a><ul>
+<li><a href="#viewdispatchtouchevent">View.dispatchTouchEvent</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结：</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90">事件分发源码解析：</a><ul>
+<li><a href="#%E4%BA%8B%E4%BB%B6action_down">事件：ACTION_DOWN</a><ul>
+<li><a href="#1%E5%81%87%E8%AE%BEonintercepttouchevent%E6%B2%A1%E6%9C%89%E6%8B%A6%E6%88%AA%E8%BF%99%E9%87%8Cintercepted%E4%B8%BAfalse">1.假设onInterceptTouchEvent没有拦截，这里intercepted为false;</a></li>
+<li><a href="#2%E5%81%87%E8%AE%BEonintercepttouchevent%E7%9B%B4%E6%8E%A5%E6%8B%A6%E6%88%AA%E8%BF%99%E9%87%8Cintercepted%E4%B8%BAtrue">2.假设onInterceptTouchEvent直接拦截，这里intercepted为true;</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93-1">总结：</a></li>
+<li><a href="#%E4%BA%8B%E4%BB%B6action_move">事件：ACTION_MOVE</a><ul>
+<li><a href="#1%E5%81%87%E8%AE%BEonintercepttouchevent%E6%B2%A1%E6%9C%89%E6%8B%A6%E6%88%AA">1.假设onInterceptTouchEvent没有拦截</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93-2">总结：</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a href="#%E4%BA%8B%E4%BB%B6%E5%86%B2%E7%AA%81">事件冲突</a><ul>
+<li><a href="#viewgrouponintercepttouchevent">ViewGroup#onInterceptTouchEvent</a></li>
+<li><a href="#%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3">冲突解决：</a><ul>
+<li><a href="#%E5%86%85%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95%E5%9C%A8%E5%AD%90view%E4%B8%AD%E8%A7%A3%E5%86%B3">内部拦截法（在子View中解决）</a></li>
+<li><a href="#%E5%86%85%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95%E6%80%BB%E7%BB%93">内部拦截法总结：</a></li>
+<li><a href="#%E5%A4%96%E9%83%A8%E6%8B%A6%E6%88%AA%E6%B3%95%E5%9C%A8%E7%88%B6view%E4%B8%AD%E8%A7%A3%E5%86%B3">外部拦截法（在父View中解决）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2 id="MotionEvent"><a href="#MotionEvent" class="headerlink" title="MotionEvent"></a>MotionEvent</h2><p><img src="/2020/12/09/dispatch/MotionEvent.png" alt="MotionEvent"></p></div><a href="/2020/12/09/dispatch/" class="read-more">阅读全文</a></article></div><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/08/gradle/" class="post-title-link">AndroidStudio开发Gradle插件</a></h2><div class="post-info">2020年12月8日</div><div class="post-content"></div><a href="/2020/12/08/gradle/" class="read-more">阅读全文</a></article></div><div class="post-list-item"><article class="post-block"><h2 class="post-title"><a href="/2020/12/08/hello-world/" class="post-title-link">Hello World</a></h2><div class="post-info">2020年12月8日</div><div class="post-content"></div><a href="/2020/12/08/hello-world/" class="read-more">阅读全文</a></article></div></div></div><div id="sidebar" class="left"><div id="about-panel"><div class="info"><div class="title">lis</div><div class="url">http://example.com</div><div class="bio">十年饮冰·难凉热血</div></div><img src="/images/2018.jpg" class="avatar"></div><div id="friend-links-panel"><div class="panel-title"><p>友情链接</p></div><a href="http://powman.org" target="_blank" class="link-item"><div class="link-container"><div class="site-name">AngryPowman</div><div class="site-desc">This is a link</div></div></a><a href="http://powman.org" target="_blank" class="link-item"><div class="link-container"><div class="site-name">Demo Links</div><div class="site-desc">You can change this in your theme config</div></div></a></div></div></div><div class="clear"></div></main><footer class="footer-container"><div class="paginator"></div><div class="copyright"><p>© 2017 - 2020 <a href="http://example.com">John Doe</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/AngryPowman/hexo-theme-prontera" target="_blank">hexo-theme-prontera</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"lis",'auto');ga('send','pageview');</script></body></html>
