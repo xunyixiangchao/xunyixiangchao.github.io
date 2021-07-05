@@ -232,7 +232,7 @@
             var gitalk = new Gitalk({
             language:'zh-CN',
             id: '8e31b3430d360b25421d3134081a73d1',
-            repo: 'blog_comment',
+            repo: 'gitalk',
             owner: 'xunyixiangchao',
             clientID: '9e8b7b8cef8759344d50',
             clientSecret: 'e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d',
@@ -270,7 +270,7 @@
                 }
                 $('.justified-gallery').justifiedGallery();
             }
-        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','blog_comment',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','gitalk',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
             loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
         });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
             elements: "a",//代表点击链接就更新
@@ -302,7 +302,7 @@
         document.addEventListener('pjax:complete', function () {
             $(".section").css({opacity:1});
             if(true){
-                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','blog_comment',false);});
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','gitalk',false);});
             }
             if(false){
                 loadMathJax();
