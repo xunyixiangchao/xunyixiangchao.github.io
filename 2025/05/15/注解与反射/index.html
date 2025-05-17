@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>注解与反射（上） - Lis</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Lis"><meta name="msapplication-TileImage" content="/img/2018.jpg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Lis"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta description="注解一般是配合反射来一起用的，所以我们把这两个合在一起来分析。 注解   注解声明 声明一个注解 元注解 注解类型元素   注解应用场景 SOURCE IDE语法检查 APT注解处理器 注解处理器的实现 APT 核心原理 APT 的优缺点 APT 应用场景 APT 工作流程图   CLASS RUNTIME      Java 注解（Annotation）又称 Java 标注，是 JDK1.5 引"><meta property="og:type" content="blog"><meta property="og:title" content="Lis"><meta property="og:url" content="https://xunyixiangchao.github.io/"><meta property="og:site_name" content="Lis"><meta property="og:description" content="注解一般是配合反射来一起用的，所以我们把这两个合在一起来分析。 注解   注解声明 声明一个注解 元注解 注解类型元素   注解应用场景 SOURCE IDE语法检查 APT注解处理器 注解处理器的实现 APT 核心原理 APT 的优缺点 APT 应用场景 APT 工作流程图   CLASS RUNTIME      Java 注解（Annotation）又称 Java 标注，是 JDK1.5 引"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://xunyixiangchao.github.io/img/2018.jpg"><meta property="article:published_time" content="2025-05-15T08:51:54.000Z"><meta property="article:modified_time" content="2025-05-17T02:58:15.468Z"><meta property="article:author" content="Lis"><meta property="article:tag" content="Java"><meta property="article:tag" content="注解"><meta property="article:tag" content="反射"><meta property="article:tag" content="动态代理"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/2018.jpg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/"},"headline":"Lis","image":["http://example.com/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.png","http://example.com/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/%E8%AF%AD%E6%B3%95%E6%A3%80%E6%9F%A5.png","http://example.com/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/java%E7%BC%96%E8%AF%91.png"],"datePublished":"2025-05-15T08:51:54.000Z","dateModified":"2025-05-17T02:58:15.468Z","author":{"@type":"Person","name":"Lis"},"description":"注解一般是配合反射来一起用的，所以我们把这两个合在一起来分析。 注解   注解声明 声明一个注解 元注解 注解类型元素   注解应用场景 SOURCE IDE语法检查 APT注解处理器 注解处理器的实现 APT 核心原理 APT 的优缺点 APT 应用场景 APT 工作流程图   CLASS RUNTIME      Java 注解（Annotation）又称 Java 标注，是 JDK1.5 引"}</script><link rel="canonical" href="http://example.com/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/"><link rel="icon" href="/img/2018.jpg"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Lis" type="application/atom+xml">
+</head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/2018.jpg" alt="Lis" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Join Gitter" href="https://xunyixiangchao.github.io/"><i class="fab fa-gitter"></i></a><a class="navbar-item" target="_blank" rel="noopener" title="GitHub" href="https://xunyixiangchao.github.io/"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2025-05-15  <a class="commentCountImg" href="/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/#comment-container"><span class="display-none-class">f6455c9c541e085bc8f9b6165e5b7aee</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="f6455c9c541e085bc8f9b6165e5b7aee">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>20 分钟  <i class="fas fa-pencil-alt"> </i>3.1 k</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">注解与反射（上）</h1><div class="content"><p>注解一般是配合反射来一起用的，所以我们把这两个合在一起来分析。</p>
+<h2><span id="注解">注解</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%A3%B0%E6%98%8E"><strong>注解声明</strong></a><ul>
+<li><a href="#%E5%A3%B0%E6%98%8E%E4%B8%80%E4%B8%AA%E6%B3%A8%E8%A7%A3"><strong>声明一个注解</strong></a></li>
+<li><a href="#%E5%85%83%E6%B3%A8%E8%A7%A3"><strong>元注解</strong></a></li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E7%B1%BB%E5%9E%8B%E5%85%83%E7%B4%A0"><strong>注解类型元素</strong></a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><strong>注解应用场景</strong></a><ul>
+<li><a href="#source"><strong>SOURCE</strong></a><ul>
+<li><a href="#ide%E8%AF%AD%E6%B3%95%E6%A3%80%E6%9F%A5"><strong>IDE语法检查</strong></a></li>
+<li><a href="#apt%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8"><strong>APT注解处理器</strong></a></li>
+<li><a href="#%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><strong>注解处理器的实现</strong></a></li>
+<li><a href="#apt-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86"><strong>APT 核心原理</strong></a></li>
+<li><a href="#apt-%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><strong>APT 的优缺点</strong></a></li>
+<li><a href="#apt-%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><strong>APT 应用场景</strong></a></li>
+<li><a href="#apt-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE"><strong>APT 工作流程图</strong></a></li>
+</ul>
+</li>
+<li><a href="#class"><strong>CLASS</strong></a></li>
+<li><a href="#runtime"><strong>RUNTIME</strong></a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<p>Java 注解（Annotation）又称 Java 标注，是 JDK1.5 引入的一种注释机制。 注解是元数据的一种形式，提供有关<br>于程序但不属于程序本身的数据。注解对它们注解的代码的操作没有直接影响。</p>
+<a id="more"></a>
+
+<h3><span id="注解声明"><strong>注解声明</strong></span></h3><h4><span id="声明一个注解"><strong>声明一个注解</strong></span></h4><p>Java中所有的注解，默认实现 <code>Annotation</code>接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.lang.annotation;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Annotation</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">	<span class="function">String <span class="title">toString</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">	Class&lt;? extends Annotation&gt; annotationType();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解的声明使用 <code>@interface</code> 关键字。一个注解的声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Test&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4><span id="元注解"><strong>元注解</strong></span></h4><p>在定义注解时，注解类也能够使用其他的注解声明。对注解类型进行注解的注解类，我们称之为 meta-<br>annotation（元注解）。一般的，我们在定义自定义注解时，需要指定的元注解有两个 ：</p>
+<blockquote>
+<p>另外还有@Documented 与 @Inherited 元注解，前者用于被javadoc工具提取成文档，后者表示允许子类<br>继承父类中定义的注解。</p>
+</blockquote>
+<p><strong>@Target</strong><br>注解标记另一个注解，以限制可以应用注解的 Java 元素类型。目标注解指定以下元素类型之一作为其值：</p>
+<ul>
+<li>ElementType.ANNOTATION_TYPE 可以应用于注解类型。</li>
+<li>ElementType.CONSTRUCTOR 可以应用于构造函数。</li>
+<li>ElementType.FIELD 可以应用于字段或属性。</li>
+<li>ElementType.LOCAL_VARIABLE 可以应用于局部变量。</li>
+<li>ElementType.METHOD 可以应用于方法级注解。</li>
+<li>ElementType.PACKAGE 可以应用于包声明。</li>
+<li>ElementType.PARAMETER 可以应用于方法的参数。</li>
+<li>ElementType.TYPE 可以应用于类的任何元素。</li>
+</ul>
+<p><strong>@Retention</strong><br>注解指定标记注解的存储方式：</p>
+<ul>
+<li><p>RetentionPolicy.SOURCE - 标记的注解仅保留在源级别中，并被编译器忽略。</p>
+</li>
+<li><p>RetentionPolicy.CLASS - 标记的注解在编译时由编译器保留，但 Java 虚拟机(JVM)会忽略。</p>
+</li>
+<li><p>RetentionPolicy.RUNTIME - 标记的注解由 JVM 保留，因此运行时环境可以使用它。</p>
+<blockquote>
+<p>@Retention 三个值中 SOURCE &lt; CLASS &lt; RUNTIME，即CLASS包含了SOURCE，RUNTIME包含SOURCE、CLASS。下文会介绍他们不同的应用场景。</p>
+</blockquote>
+</li>
+</ul>
+<p>下面来看例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE,ElementType.FIELD&#125;)</span> <span class="comment">// 允许在类与类属性上标记该注解  **作用目标**</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.SOURCE)</span> <span class="comment">//注解保留在源码中    **保留时**</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Test &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4><span id="注解类型元素"><strong>注解类型元素</strong></span></h4><p>在上文元注解中，允许在使用注解时传递参数。我们也能让自定义注解的主体包含 annotation type element (注解类型元素) 声明，它们看起来很像方法，可以定义可选的默认值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE,ElementType.FIELD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.SOURCE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Test &#123;</span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span></span>; <span class="comment">//无默认值</span></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">age</span><span class="params">()</span> <span class="keyword">default</span> 1</span>; <span class="comment">//有默认值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：在使用注解时，如果定义的注解中的类型元素无默认值，则必须进行传值。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test(&quot;帅&quot;)</span> <span class="comment">//如果只存在value元素需要传值的情况，则可以省略:元素名=</span></span><br><span class="line"><span class="meta">@Test(value=&quot;帅&quot;,age = 2)</span></span><br><span class="line"><span class="keyword">int</span> i;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="注解应用场景"><strong>注解应用场景</strong></span></h3><p>按照@Retention 元注解定义的注解存储方式，注解可以被在三种场景下使用：</p>
+<p> <img src="/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.png" alt="应用场景"></p>
+<h4><span id="source"><strong>SOURCE</strong></span></h4><p><code>RetentionPolicy.SOURCE</code> ，作用于源码级别的注解，可提供给IDE语法检查、APT等场景使用。</p>
+<p>在类中使用 SOURCE 级别的注解，其编译之后的class中会被丢弃。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--AnnotationTest.java</span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--AnnotationTest.class</span><br><span class="line"><span class="comment">// 这里的注解被丢弃了</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5><span id="ide语法检查"><strong>IDE语法检查</strong></span></h5><p>在Android开发中， <code>support-annotations</code> 与 <code>androidx.annotation</code>中均有提供 @IntDef 注解，此注解的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> androidx.annotation;</span><br><span class="line"><span class="meta">@Retention(SOURCE)</span> <span class="comment">//源码级别的注解</span></span><br><span class="line"><span class="meta">@Target(&#123;ANNOTATION_TYPE&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> IntDef &#123;</span><br><span class="line">    <span class="keyword">int</span>[] value() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">flag</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">open</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Java中Enum(枚举)的实质是特殊单例的静态成员变量，在运行期所有枚举类作为单例，全部加载到内存中。<br>比常量多5到10倍的内存占用。</p>
+</blockquote>
+<p>而现在为了进行内存优化，我们现在不再使用枚举，则方法定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SUNDAY = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MONDAY = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentDay</span><span class="params">(<span class="keyword">int</span> currentDay)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    setCurrentDay(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而此时，调用 <code>setCurrentDay</code>方法由于采用基本数据类型int，将无法进行类型限定。此时使用@IntDef增加自定义注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IntDef(&#123;IntDefTest.MONDAY,IntDefTest.SUNDAY&#125;)</span> <span class="comment">//限定为 MONDAY，SUNDAY</span></span><br><span class="line"><span class="meta">@Target(ElementType.PARAMETER)</span> <span class="comment">//作用于参数的注解</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.SOURCE)</span> <span class="comment">//源码级别注解</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> WeekDayAnn &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentDay</span><span class="params">(<span class="meta">@WeekDayAnn</span> <span class="keyword">int</span> currentDay)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们再去调用 <code>setCurrentDay</code>方法，如果传递的参数不是 MONDAY或者 SUNDAY则会显示 Inspection 警告(编译不会报错)。</p>
+<p><img src="/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/%E8%AF%AD%E6%B3%95%E6%A3%80%E6%9F%A5.png" alt="语法检查"></p>
+<p>以上注解均为 SOURCE 级别，本身IDEA/AS 就是由Java开发的，工具实现了对Java语法的检查，借助注解能对被注解的特定语法进行额外检查。</p>
+<h5><span id="apt注解处理器"><strong>APT注解处理器</strong></span></h5><p>APT全称为：”Anotation Processor Tools”，意为注解处理器。顾名思义，其用于处理注解。编写好的Java源文<br>件，需要经过 javac 的编译，翻译为虚拟机能够加载解析的字节码Class文件。注解处理器是 javac 自带的一个工<br>具，用来在编译时期扫描处理注解信息。你可以为某些注解注册自己的注解处理器。 注册的注解处理器由 javac<br>调起，并将注解信息传递给注解处理器进行处理。</p>
+<blockquote>
+<p>注解处理器是对注解应用最为广泛的场景。在Glide、EventBus3、Butterknifer、Tinker、ARouter等等常用<br>框架中都有注解处理器的身影。但是你可能会发现，这些框架中对注解的定义并不是 SOURCE 级别，更多的<br>是 CLASS 级别，别忘了：CLASS包含了SOURCE，RUNTIME包含SOURCE、CLASS。</p>
+</blockquote>
+<h5><span id="注解处理器的实现"><strong>注解处理器的实现</strong></span></h5><p>首先在程序中添加一个Java Module <code>annotation</code> 用于专门写注解,创建一个注解MyClass</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.SOURCE)</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyClass &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>单独创建annotation模块，能够给其他子模块进行依赖</p>
+</blockquote>
+<p>然后再添加一个Java Module <code>compiler</code> 用于注解处理器的编写</p>
+<p>在app和compiler中build.gradle中添加annotation的依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies&#123;</span><br><span class="line">    <span class="function">implementation <span class="title">project</span><span class="params">(<span class="string">&#x27;:annotation&#x27;</span>)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>compiler</code>中添加注解处理器继承AbstractProcessor</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.lis.compiler;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Processor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注册注解处理器</strong></p>
+<p>在<code>compiler</code> main目录下创建以下目录及文件<code>resources\META-INF\services\javax.annotation.processing.Processor</code>  这此文件里添加注解处理器的实现类<code>com.lis.compiler.Processor</code> （每个注解处理器占一行）</p>
+<blockquote>
+<p>另外一种是使用AutoService自动完成注册 @AutoService(Processor.class) <em>//固定写法</em></p>
+<p>compileOnly ‘com.google.auto.service:auto-service:1.0’<br>annotationProcessor ‘com.google.auto.service:auto-service:1.0’</p>
+<p>@AutoService(Processor.class) //固定写法<br>@SupportedAnnotationTypes({“com.lis.annotation.MyClass”})<br>public class Processor extends AbstractProcessor {</p>
+<p>}</p>
+</blockquote>
+<p><strong>设置处理器要处理的注解</strong></p>
+<p>有两种方式</p>
+<p>1.重写getSupportedAnnotationTypes方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 允许此注解处理器处理的注解</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Set&lt;String&gt; <span class="title">getSupportedAnnotationTypes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Collections.singleton(<span class="string">&quot;com.lis.annotation.MyClass&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.在class上添加注解SupportedAnnotationTypes</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SupportedAnnotationTypes(&#123;&quot;com.lis.annotation.MyClass&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Processor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; annotations, RoundEnvironment roundEnv)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 允许此注解处理器处理的注解 </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="comment">//    @Override</span></span><br><span class="line"><span class="comment">//    public Set&lt;String&gt; getSupportedAnnotationTypes() &#123;</span></span><br><span class="line"><span class="comment">//        return Collections.singleton(&quot;com.lis.annotation.MyClass&quot;);</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在app中使用此注解处理器（build文件中引用此注解处理器）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">implementation <span class="title">project</span><span class="params">(<span class="string">&#x27;:annotation&#x27;</span>)</span></span></span><br><span class="line"><span class="function">annotationProcessor <span class="title">project</span><span class="params">(<span class="string">&#x27;:compiler&#x27;</span>)</span> <span class="comment">//kotlin使用kapt</span></span></span><br></pre></td></tr></table></figure>
+
+<p>使用kotlin时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;kotlin-kapt&#x27;</span> <span class="comment">//引入kapt插件</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">kapt <span class="title">project</span><span class="params">(<span class="string">&#x27;:compiler&#x27;</span>)</span> <span class="comment">//使用kapt引入注解处理器</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>app</code>中使用注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MyClass</span></span><br><span class="line">class MainActivity : AppCompatActivity()&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>apt: 不会打包进APK，只会在编译时参与编译</strong></p>
+<p>在注解处理器中输出一个日志<code>=======================&gt;</code>,然后编译项目可以看到以下日志输出</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; Task :app:kaptDebugKotlin</span><br><span class="line">警告: No SupportedSourceVersion annotation found on com.lis.compiler.Processor, returning RELEASE_6.警告: 来自注释处理程序 <span class="string">&#x27;org.jetbrains.kotlin.kapt3.base.ProcessorWrapper&#x27;</span> 的受支持 source 版本 <span class="string">&#x27;RELEASE_6&#x27;</span> 低于 -source <span class="string">&#x27;1.8&#x27;</span></span><br><span class="line">注: =======================&gt;</span><br><span class="line">注: =======================&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<blockquote>
+<p>问题：注解处理器为什么会执行多次？</p>
+</blockquote>
+<p><img src="/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/java%E7%BC%96%E8%AF%91.png" alt="java编译"></p>
+<p>因为java编译过程：词法分析、语法分析、填充符号表、注解处理器处理注解、语义分析、解语法糖、生成字节码。</p>
+<p>注解处理器可以增删改抽象语法树的任意元素。执行到注解处理器，都会重新执行 语法分析、填充符号表 步，直到注解处理器不再对语法树进行修改为止，第一次的循环过程都称为一次Roud。</p>
+<p>process第一个参数set集合是要处理的注解集合，如果这个集合为null了，就不需要处理了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(!annotations.isEmpty())&#123;</span><br><span class="line">   <span class="comment">//todo</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5><span id="apt-核心原理"><strong>APT 核心原理</strong></span></h5><ol>
+<li><strong>编译时触发：</strong>  当 Java 编译器（javac）开始工作时，APT 自动启动。</li>
+<li><strong>扫描注解：</strong>  遍历所有源码和 Class 文件，找到被目标注解标记的元素（如字段、方法）。</li>
+<li><strong>生成代码：</strong>  根据注解信息，用 JavaPoet 等工具生成新的 Java 文件。</li>
+<li><strong>多轮处理：</strong>  生成的代码可能包含新注解，APT 会多次循环处理，直到无新代码生成。</li>
+</ol>
+<h5><span id="apt-的优缺点"><strong>APT 的优缺点</strong></span></h5><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>编译时处理</strong>，不拖慢运行速度</td>
+<td>学习成本高，需要理解注解处理器API</td>
+</tr>
+<tr>
+<td><strong>减少手写重复代码</strong>（如 findViewById）</td>
+<td>生成的代码调试困难</td>
+</tr>
+<tr>
+<td><strong>代码更干净</strong>，维护方便</td>
+<td>配置稍繁琐（注册处理器）</td>
+</tr>
+</tbody></table>
+<h5><span id="apt-应用场景"><strong>APT 应用场景</strong></span></h5><ol>
+<li><strong>View 绑定：</strong>  如 ButterKnife，自动生成 findViewById 代码。</li>
+<li><strong>依赖注入：</strong>  如 Dagger2，生成依赖注入逻辑。</li>
+<li><strong>路由框架：</strong>  如 ARouter，生成 Activity 路由表。</li>
+<li><strong>序列化/反序列化：</strong>  如 Gson TypeAdapter 自动生成。</li>
+</ol>
+<h5><span id="apt-工作流程图"><strong>APT 工作流程图</strong></span></h5><p>写注解 → 编译 → APT 扫描 → 生成代码 → 二次编译 → 最终 APK  </p>
+<h4><span id="class"><strong>CLASS</strong></span></h4><p>定义为 <code>CLASS</code> 的注解，会保留在class文件中，但是会被虚拟机忽略(即无法在运行期反射获取注解)。此时完全符合此种注解的应用场景为字节码操作。如：AspectJ、热修复Roubust中应用此场景。<br>所谓字节码操作即为，直接修改字节码Class文件以达到修改代码执行逻辑的目的。在程序中有多处需要进行是否<br>登录的判断。</p>
+<p>如果我们使用普通的编程方式，需要在代码中进行 <code>if-else</code> 的判断，也许存在十个判断点，则需要在每个判断点加<br>入此项判断。此时，我们可以借助AOP(面向切面)编程思想，将程序中所有功能点划分为： 需要登录 与 无需登录<br>两种类型，即两个切面。对于切面的区分即可采用注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Java源码</span></span><br><span class="line"><span class="meta">@Target(ElementType.METHOD)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.CLASS)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Login &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Login</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jumpA</span><span class="params">()</span></span>&#123;</span><br><span class="line">	startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>,AActivity.class));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jumpB</span><span class="params">()</span></span>&#123;</span><br><span class="line">	startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>,BActivity.class));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上诉代码中， <code>jumpA</code> 方法需要具备登录身份。而 <code>Login</code> 注解的定义被设置为 <code>CLASS</code> 。因此我们能够在该类所编译的字节码中获得到方法注解 <code>Login</code> 。在操作字节码时，就能够根据方法是否具备该注解来修改class中该方法的<br>内容加入 <code>if-else</code> 的代码段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Class字节码</span></span><br><span class="line"><span class="meta">@Login</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jumpA</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.isLogin) &#123;</span><br><span class="line">        <span class="keyword">this</span>.startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>, LoginActivity.class));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>, AActivity.class));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jumpB</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	startActivity(<span class="keyword">new</span> Intent(<span class="keyword">this</span>,BActivity.class));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解能够设置类型元素(参数)，结合参数能实现更为丰富的场景，如：运行期权限判定等</p>
+<h4><span id="runtime"><strong>RUNTIME</strong></span></h4><p>注解保留至运行期，意味着我们能够在运行期间结合反射技术获取注解中的所有信息。</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>注解与反射（上）</p><p><a href="http://example.com/2025/05/15/注解与反射/">http://example.com/2025/05/15/注解与反射/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><a href="http://example.com"><p>Lis</p></a></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2025-05-15</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2025-05-17</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icon" rel="noopener" target="_blank" title="Creative Commons" href="https://xunyixiangchao.github.io/"><i class="fab fa-creative-commons"></i></a><a class="icon" rel="noopener" target="_blank" title="Attribution" href="https://xunyixiangchao.github.io/"><i class="fab fa-creative-commons-by"></i></a><a class="icon" rel="noopener" target="_blank" title="Noncommercial" href="https://xunyixiangchao.github.io/"><i class="fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="recommend-area"><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2021/11/28/%E6%B3%9B%E5%9E%8B/" target="_blank">泛型</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2021/06/15/view/" target="_blank">View基础</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2025/04/07/chapter-07/"><span class="level-item">第七章 类加载和函数调用</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--><div class="card"><div class="card-content"><div class="title is-5">评论</div><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'f6455c9c541e085bc8f9b6165e5b7aee',
+            repo: 'gitalk',
+            owner: 'xunyixiangchao',
+            clientID: '9e8b7b8cef8759344d50',
+            clientSecret: 'e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d',
+            admin: ["xunyixiangchao"],
+            createIssueManually: true,
+            distractionFreeMode: false,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="/img/2018.jpg" alt="Lis"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Lis</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>中国</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">10</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">3</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">9</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/xunyixiangchao" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/xunyixiangchao"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/xunyixiangchao"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:Lis@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Next" href="https://xunyixiangchao.github.io/"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-05-15T08:51:54.000Z">2025-05-15</time></p><p class="title"><a href="/2025/05/15/%E6%B3%A8%E8%A7%A3%E4%B8%8E%E5%8F%8D%E5%B0%84/">注解与反射（上）</a></p><p class="categories"><a href="/categories/Java%E5%9F%BA%E7%A1%80%E4%B8%8E%E8%BF%9B%E9%98%B6/">Java基础与进阶</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-04-07T03:45:54.000Z">2025-04-07</time></p><p class="title"><a href="/2025/04/07/chapter-07/">第七章 类加载和函数调用</a></p><p class="categories"><a href="/categories/Android%E6%BA%90%E7%A0%81/">Android源码</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-04-07T03:45:54.000Z">2025-04-07</time></p><p class="title"><a href="/2025/04/07/chapter-03/">第三章 认识系统组件</a></p><p class="categories"><a href="/categories/Android%E6%BA%90%E7%A0%81/">Android源码</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-11-28T14:45:54.000Z">2021-11-28</time></p><p class="title"><a href="/2021/11/28/%E6%B3%9B%E5%9E%8B/">泛型</a></p><p class="categories"><a href="/categories/Java%E5%9F%BA%E7%A1%80%E4%B8%8E%E8%BF%9B%E9%98%B6/">Java基础与进阶</a></p></div></article><article class="media"><figure class="media-left"><a class="image" href="/2021/06/15/view/"><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2019/20190919221611.png" alt="View基础"></a></figure><div class="media-content"><p class="date"><time dateTime="2021-06-15T06:56:23.000Z">2021-06-15</time></p><p class="title"><a href="/2021/06/15/view/">View基础</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Android%E4%B8%89%E6%96%B9%E5%BA%93%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"><span class="level-start"><span class="level-item">Android三方库源码分析</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Android%E6%BA%90%E7%A0%81/"><span class="level-start"><span class="level-item">Android源码</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java%E5%9F%BA%E7%A1%80%E4%B8%8E%E8%BF%9B%E9%98%B6/"><span class="level-start"><span class="level-item">Java基础与进阶</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2025/05/"><span class="level-start"><span class="level-item">五月 2025</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2025/04/"><span class="level-start"><span class="level-item">四月 2025</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2021/11/"><span class="level-start"><span class="level-item">十一月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2021/06/"><span class="level-start"><span class="level-item">六月 2021</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2020/12/"><span class="level-start"><span class="level-item">十二月 2020</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Android%E6%BA%90%E7%A0%81/"><span class="tag">Android源码</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java/"><span class="tag">Java</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/OkHttp/"><span class="tag">OkHttp</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/activity/"><span class="tag">activity</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/dispatch/"><span class="tag">dispatch</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/"><span class="tag">动态代理</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8F%8D%E5%B0%84/"><span class="tag">反射</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B3%9B%E5%9E%8B/"><span class="tag">泛型</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B3%A8%E8%A7%A3/"><span class="tag">注解</span><span class="tag is-grey-lightest">1</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><!--!--><div class="column-right-shadow is-hidden-widescreen"></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/2018.jpg" alt="Lis" height="28"></a><p class="size-small"><span>&copy; 2025 Lis</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://xunyixiangchao.github.io/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://xunyixiangchao.github.io/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="GitHub" href="https://xunyixiangchao.github.io/"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','gitalk',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('9e8b7b8cef8759344d50','e5ef7e0a75d0431208a8fc15f1b41bd45bf0ca2d','xunyixiangchao','gitalk',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
+        });</script></body></html>
